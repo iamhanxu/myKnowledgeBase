@@ -1,0 +1,471 @@
+Creational Pattern(5): these patterns provide the best way to produce Class instance as required
+
+Singleton Pattern
+Factory Pattern
+Abstract Factory Pattern
+Builder Pattern
+Prototype Pattern
+
+
+## Singleton Pattern##
+
+Description:
+Singleton pattern ensures that there will be only one instance of this class in the JVM
+
+Where to use:
+Singleton pattern is used for logging, drivers objects, caching and thread pool.
+
+Design steps:
+1) make Constructor private to restrict instantiation from other classes
+2) make a private static instance variable of this class
+3) make a public static getInstance method to return the instance variable
+4) inside the getInstance method, use thread-safe implementation, synchronized between two if conditions
+
+
+Code:
+
+public class ThreadPool {
+	private ThreadPool() {}
+	private static ThreadPool instance;
+	public static ThreadPool getInstance() {
+		if (instance == null) {
+			synchronized (ThreadPool.class) {
+				if (instance == null) {
+					instance = new ThreadPool();
+				}
+			}
+		}
+		return instance;
+	}
+}
+
+
+## Factory Pattern##
+
+Description:
+Factory design pattern is used when we have a super class with multiple sub-classes 
+and based on input, we need to return one of the sub-class.
+
+When to use:
+1) java.util.Calendar, ResourceBundle and NumberFormat getInstance() methods uses Factory pattern.
+2) valueOf() method in wrapper classes like Boolean, Integer etc.
+
+Design steps:
+1) Design a common interface for all products you want to produce in the factory
+2) Define products by subclass the common interface
+3) Define a factory class, with public static method, the input is the type of what product you want to make
+4) Put if-elseif logic in the public static method, this method is used to generate product objects
+5) Define a Client class to test the factory pattern
+
+Code:
+
+//Common interface
+public interface Ship {
+	public void getDescripton();
+}
+//subclass of the interface
+public class FishingShip implements Ship {
+	private String name;
+	private String env;
+	public FishingShip(String name,  String env) {
+		this.name = name;
+		this.env = env;
+	}
+	@Override
+	public void getDescripton() {
+		String des = "This Cruise ship is: " + name + " run in:" + env;
+		System.out.println(des);
+	}
+}
+public class CruiseShip implements Ship {
+	private String name;
+	private double value;
+	private String env;
+	public CruiseShip(String name, double value, String env) {
+		this.name = name;
+		this.value = value;
+		this.env = env;
+	}
+	@Override
+	public void getDescripton() {
+		String des = "This Cruise ship is: " + name + ", price is: " + value
+				+ " run in:" + env;
+		System.out.println(des);
+	}
+}
+//Factory class
+public class ShipFactory {
+	public static Ship produceShip(int type, String name, String env,
+			double value) {
+		if (type == ShipTypes.CRUISE_SHIP) {
+			return new CruiseShip(name, value, env);
+		} else if (type == ShipTypes.FISHING_SHIP) {
+			return new FishingShip(name, env);
+		} else {
+			return null;
+		}
+	}
+}
+
+
+## Abstract Factory Pattern##
+
+Description:
+In Abstract Factory pattern, we get rid of if-else block and have a abstract factory class for each sub-class.
+And then define a factory class with a public static method to generate products, the method take abstract factory as parameter.
+Abstract Factory classes are injected into the factory method to produce product.
+
+When to use:
+$$$
+
+
+
+Design steps:
+1) Design a common product interface for all products you want to produce in the factory
+2) Define products by subclass the common product interface
+3) Define a common abstract factory inteface for the common product interface
+4) For each product subclass, design a abstract factory implementation to produce it
+5) Define a factory class, with public static method, the input is Abstract factory interface, 
+4) call the produce method of the Abstract factory interface implementation 
+5) Define a Client class to test the abstract factory pattern
+
+Code:
+
+//Common interface
+public interface Ship {
+	public void getDescripton();
+}
+
+// common abstract factory interface
+public interface AbstractShipFactory {
+	public Ship produceShip();
+}
+
+//Subclass of the common interface
+public class FishingShip implements Ship {
+	private String name;
+	private String env;
+	public FishingShip(String name,  String env) {
+		this.name = name;
+		this.env = env;
+	}
+	@Override
+	public void getDescripton() {
+		String des = "This Fishing ship is: " + name + " run in:" + env;
+		System.out.println(des);
+	}
+}
+
+public class CruiseShip implements Ship {
+	private String name;
+	private double value;
+	private String env;
+	public CruiseShip(String name, double value, String env) {
+		this.name = name;
+		this.value = value;
+		this.env = env;
+	}
+	@Override
+	public void getDescripton() {
+		String des = "This Cruise ship is: " + name + ", price is: " + value
+				+ " run in:" + env;
+		System.out.println(des);
+	}
+}
+
+// implementation of the common abstract factory interface for each product
+
+
+public class AbstractFishingShipFactory implements AbstractShipFactory {
+	private String name;
+	private String env;
+	public AbstractFishingShipFactory(String name, String env) {
+		this.name = name;
+		this.env = env;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public void setEnv(String env) {
+		this.env = env;
+	}
+	@Override
+	public Ship produceShip() {
+		// TODO Auto-generated method stub
+		return new FishingShip(name, env);
+	}
+}
+
+public class AbstractCruiseShipFactory implements AbstractShipFactory {
+	private String name;
+	private double value;
+	private String env;
+	public AbstractCruiseShipFactory(String name, double value, String env) {
+		this.name = name;
+		this.value = value;
+		this.env = env;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public void setValue(double value) {
+		this.value = value;
+	}
+	public void setEnv(String env) {
+		this.env = env;
+	}
+	@Override
+	public Ship produceShip() {
+		// TODO Auto-generated method stub
+		return new CruiseShip(name, value, env);
+	}
+}
+// define the factory class with the public static method,
+// inject  abstract factory class into the method to produce products
+
+public class ShipFactory {
+	public static Ship produceShip(AbstractShipFactory factory) {
+		if (factory != null) {
+			return factory.produceShip();
+		}
+		return null;
+	}
+}
+
+
+
+##Prototype Pattern##
+
+Description:
+use Clone to copy a existing object, and return it as new.
+
+When to use:
+when the Object creation is a costly affair and requires a lot of time and resources 
+and you have a similar object already existing. 
+
+
+Design Steps:
+1) define a prototype interface which extend the marker interface Cloneable, the interface
+define a clone method that return the prototype
+2) define class implement the the prototype class, and implement the clone method
+3) define a factory class, and use clone to produce objects
+
+
+
+Code:
+
+//define the prototype interface
+public interface PrototypeCable extends Cloneable {
+	public PrototypeCable clone() throws CloneNotSupportedException;
+}
+
+// implement the prototype interface, then this class can be clone
+
+public class Person implements PrototypeCable {
+	private int id;
+	private String name;
+	private int age;
+	private String education;
+	private String address;
+	public Person(int id, String name, int age, String education, String address) {
+		this.id = id;
+		this.name = name;
+		this.age = age;
+		this.education = education;
+		this.address = address;
+	}
+	@Override
+	public PrototypeCable clone() throws CloneNotSupportedException {
+		Person tmp = (Person) super.clone();
+		return tmp;
+	}
+	@Override
+	public String toString() {
+		String s = "id:" + id + ",name:" + name + ",age:" + age + ",education:"
+				+ education + ",address:" + address;
+		return s;
+	}
+}
+
+// define a factory class to generate object by using clone
+
+public class PersonFactory {
+
+	private static Person person;
+
+	static {
+		person = new Person(1, "leo", 1, "master", "toronto");
+	}
+
+	public static Person getInstance() {
+
+		try {
+			return (Person) person.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+}
+
+
+##Builder Pattern##
+
+Description:
+
+ is to separate the construction of a complex object from its representation. 
+ so that the same construction process can create different representation.
+ 
+ To decouple the construction and the implementation, so you can use different algorithms
+ to the implementation.
+Where to use:
+StringBuilder append method
+
+Design Steps:
+1) Design the product you want to build
+2) Design the Builder Interface, that has abstract method to descript the build process
+to build different part and eventually return the product
+3) Create concrete Builder class to implement the Builder Interface
+4) Add a Director class that take the builder object, and follow steps to get the product
+5) build a client to test
+
+
+
+Code:
+
+//Build the product POJO
+
+public class Meal {
+	private String name;
+	private double price;
+	private String maincourse;
+	private String drink;
+	private String desert;
+	public Meal() {
+		this.name = "";
+		this.price = 0;
+		this.maincourse = "";
+		this.desert = "";
+		this.desert = "";
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public double getPrice() {
+		return price;
+	}
+	public void setPrice(double price) {
+		this.price = price;
+	}
+	public String getMaincourse() {
+		return maincourse;
+	}
+	public void setMaincourse(String maincourse) {
+		this.maincourse = maincourse;
+	}
+	public String getDrink() {
+		return drink;
+	}
+	public void setDrink(String drink) {
+		this.drink = drink;
+	}
+	public String getDesert() {
+		return desert;
+	}
+	public void setDesert(String desert) {
+		this.desert = desert;
+	}
+	@Override
+	public String toString() {
+		return "Meal [name=" + name + ", price=" + price + ", maincourse="
+				+ maincourse + ", drink=" + drink + ", desert=" + desert + "]";
+	}
+}
+
+// Design the abstract Builder
+
+public abstract class MealBuilder {
+	protected Meal meal;
+	public abstract void startBuildMeal(Meal meal);
+	public void buildMainCourse(String str, double price) {
+		if (this.meal == null)
+			return;
+		this.meal.setMaincourse(str);
+		this.meal.setPrice(price + this.meal.getPrice());
+	}
+	public void buildDrink(String str, double price) {
+		if (this.meal == null)
+			return;
+		this.meal.setDrink(str);
+		this.meal.setPrice(price + this.meal.getPrice());
+	}
+	public void buildDesert(String str, double price) {
+		if (this.meal == null)
+			return;
+		this.meal.setDesert(str);
+		this.meal.setPrice(price + this.meal.getPrice());
+	}
+	public Meal getMeal() {
+		return this.meal;
+	}
+	public void printReceipt() {
+		if (this.meal == null)
+			return;
+		System.out.println(this.meal);
+	}
+}
+
+// Design the concrete builder
+
+public class JapaneseMealBuilder extends MealBuilder {
+	@Override
+	public void startBuildMeal(Meal meal) {
+		this.meal = meal;
+		if (this.meal == null)
+			return;
+		this.meal.setName("Japanese Sushi Combo");
+	}
+}
+
+public class KoreanMealBuilder extends MealBuilder {
+	@Override
+	public void startBuildMeal(Meal meal) {
+		this.meal = meal;
+		if(this.meal == null)
+			return;
+		this.meal.setName("Korean Kimchi Combo");
+	}
+}
+
+
+// Design the director class
+
+public class MealDirector {
+	public static Meal getMeal(MealBuilder builder, String maincourse,
+			double mainprice, String drink, double drinkprice, String desert,
+			double desertprice) {
+		Meal meal = new Meal();
+		builder.startBuildMeal(meal);
+		builder.buildMainCourse(maincourse, mainprice);
+		builder.buildDrink(drink, drinkprice);
+		builder.buildDesert(desert, desertprice);
+		builder.printReceipt();
+		return builder.getMeal();
+	}
+}
+
+//build a client to start the build
+
+public class Client {
+	public static void main(String[] args) {
+		MealBuilder JBuilder = new JapaneseMealBuilder();
+		MealBuilder KBuilder = new KoreanMealBuilder();
+		Meal Jmeal = MealDirector.getMeal(JBuilder, "Rice", 12, "Saski", 20, "ice cream", 5);
+		Meal Kmeal = MealDirector.getMeal(KBuilder, "Bread", 21, "Shaojiu", 21, "cake", 6);
+	}
+}
