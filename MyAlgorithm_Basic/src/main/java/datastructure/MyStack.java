@@ -1,6 +1,6 @@
 package datastructure;
 
-public class StackLinkedList {
+public class MyStack {
 
 	private static class Node {
 		private int data;
@@ -51,7 +51,7 @@ public class StackLinkedList {
 
 	public static void main(String[] args) {
 
-		StackLinkedList stack = new StackLinkedList();
+		MyStack stack = new MyStack();
 		
 		stack.push(1);
 		stack.push(2);
