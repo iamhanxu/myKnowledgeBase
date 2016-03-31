@@ -12,31 +12,37 @@ Your algorithm should use only constant space. You may not modify the values in 
 
  */
 public class Swap_Nodes_in_Pairs_24 {
-	public ListNode swapPairs(ListNode head) {
 
+	public ListNode swapPairs(ListNode head) {
 		if (head == null || head.next == null)
 			return head;
+
 		ListNode previous = null;
 		ListNode first = head;
 		ListNode second = head.next;
-		ListNode newNode = second;
 
 		while (first != null && second != null) {
 			first.next = second.next;
 			second.next = first;
+
 			if (previous != null) {
 				previous.next = second;
+			} else {
+				head = second;
 			}
+
 			previous = first;
+			previous.next = first.next;
 			if (first.next == null) {
 				first = null;
 				second = null;
 			} else {
+				second = first.next.next;
 				first = first.next;
-				second = first.next;
 			}
 		}
+		return head;
 
-		return newNode;
 	}
+
 }
