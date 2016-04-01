@@ -1,0 +1,406 @@
+Java IO package
+
+File I/O concepts
+
+File
+FileWriter
+FileReader
+BufferedWritter
+BufferedReader
+PrintWriter
+
+####    1 File class   #######
+
+File class object can be used to create/access File and Directory
+
+
+File f = new File("abc.txt"); This line wont create any physical file, it represent a file.
+  1) first it will check if there are any physical file already exist with abc.txt
+  2) if it already exists, then f point to that physical file.
+  3) if it dont not exist, it wont create any physical file, and it just create the file object to represent the file named abc.txt
+
+example:
+
+File f = new File("abc.txt");
+
+System.out.println(f.exists()); // show if the file exists
+
+//if you want to create a file
+//if the physical not exist , then the physical file will be created
+//if the file exist already, it will not do anything
+f.createNewFile(); 
+
+System.out.println(f.exists()); // show if the file exists
+
+
+##create a directory
+
+File f = new File("directory");
+
+f.mkdir();
+
+
+##File class Constructors
+
+File class constructors:
+   //represent a file in the current directory
+  1) File f= new File(String name);
+  
+  //represent a file in the given directory
+  2) File f= new File(String subdir, String name)
+  
+  //represent a file in the given directory
+  3) File f = new File(File subdir, String name);
+  
+  example:  File f = new File("E:/xyz","han.txt");
+  
+  
+  
+#####Important methods of File class
+
+//return true if the specified physical file for directory exists in the system
+1) boolean exists();
+
+// 1.check if the physical file exist, 
+// 2. if exist return false without any operation 
+// 3. if not exist, create the new file and return true
+2) boolean createNewFile();
+3) boolean mkdir();
+
+//return true if this File object point to "physical file" 
+4) boolean isFile();
+
+//return true if the File object represent directory
+5) boolean isDirectory();
+
+// return the names of all files and directories in the specified directory
+6) String[] list();
+
+// return the number of characters of the file
+7) long length();
+
+//to delete specified file or directory
+8) boolean delete();
+
+
+example: 
+given a folder c:/leohan
+can you display the name of all the directories and files in the above folder
+
+
+public void display(){
+
+    File dir = new File("C:/leohan");
+    if(!dir.isDirectory())
+    return;
+    
+    String[] namelist = dir.list();
+    
+    for(String name: namelist){
+       File file = new File(dir, name);
+       if(file.isDirectory()){
+       System.out.println("Directory: "+name);
+       }else if( file.isFile() ){
+       System.out.println("File: "+name);
+       }
+    }
+}
+
+
+####### 2 FileWriter##############
+
+FileWriter is used to write character data (text data) into a file.
+
+
+##Constructors:
+   1) FileWriter fw = new FileWriter(string name);
+   2) FileWriter fw = new FileWriter(File f);
+   This two method, will overide the existing data in the file
+   
+   
+   1) FileWriter fw = new FileWriter(String name, boolean append);
+   2) FileWriter fw = new FileWriter(File f, boolean append);
+   
+   If the specified file is not exist, the above constructors will create that file
+   but it reqired the directory is present.
+
+
+##Methods of FileWriter class:
+
+   1) write(int ch): to write a single character to the file,unicode value
+   2) write(char[] ch): to write an array of characters to the file
+   3) write(String s): to write a String to the file
+   
+   //highly recommed to call this method at the end to make //sure all character data is write into file
+  *4) flush() : to give the guarantee the total data including last character written properly to the fiile
+   
+   //close the resource, need to close it otherwise affected //the performance
+   5) close();
+   
+   
+ Example:
+
+public void main(){
+
+	FileWriter fw = new FileWriter("abc.txt");
+	fw.write(100); // write a unicode character
+	fw.write("i am leo han"); //write a string
+	char[] ch1 = {'a','b','c'};
+	fw.write("\n");
+	fw.write(ch1); //write a char array
+	fw.flush(); //guarantee everything fw write to the file
+	fw.close(); //close the file writer
+} 
+
+problem with the FileWriter:
+ we need to manually insert the "\n"
+
+
+  
+   
+########FileReader
+
+
+we can use FileReader to read character data (text data) from the file
+
+
+##Constructors
+  1) FileReader fr = new FileReader(String filename);
+  2) FileReader fr = new FileReader(File f);
+  
+
+  
+##Methods:
+  //it try to read the next character from the file,
+  //and return its unicode value.
+  //if there is no next character, it will return -100
+  // we need to cast this int to char when we want to use it 
+  1) int read(); // the return value is UNICODE
+   
+   example:
+   
+   FileReader fr = new FileReader("abc.txt");
+   int i =fr.read();
+   while(i!=-1){
+   System.out.print((char)i); 
+   //UNICODE need to be casted to char 
+    i = fr.read();
+   }
+   
+   
+   read one character by one character;
+   
+
+   
+   // It try to read enough characters from the File into
+   // char array and return the number of character copied //from the file to the array
+   2) int read(char[] ch)   
+   
+   example:
+   
+   File f = new File("abc.txt");
+   char[] ch = new char[(int)f.length()];
+   FileReader fr = new FileReader(f);
+   f.read(ch);
+   for(char c : ch){
+   System.out.print(c);
+   }
+   
+   
+   
+3)   void close() //close the FileReader
+   
+   
+ Notice: we have FileReader to read data but  why use BufferedReader
+   
+   using FileReader, we read file charcter by character, it is not a convinent way  and performance is bad
+   
+   using BufferedReader we can read data line by line 
+   
+   
+   
+################################################
+Important: Usage of FileWriter and FileReader is Not Recommended because:
+1) while writing file by FileWriter, we have to insert the line seperator manually, which is different from system to system. It is difficulut to programmer.
+
+2) while readding file by FileReader, we read the file character by character , which is not convinent to the programmer.
+
+
+To Overcome the limitation for FileWriter and FileReader, we should use BufferedReader and BufferedWriter
+
+
+#### BufferedWriter #############3
+
+We can use BufferedWriter to write character data (text data) to file 
+
+
+##Constructors:
+
+1) BufferedWritter bw = new BufferedWritter(Writer w);
+2) BufferedWritter bw = new BufferedWriter(Writer w, int buffersize);
+ps: BufferedWriter can not communicate directly with File, it can communicate with Writer interface only (decorator pattern)
+   
+
+   
+##Methods of BufferedWriter:
+1) write(int ch);
+2) write(char[] ch);
+3) write(String s);
+4) flush();
+5) close();
+**6) newLine();  To Insert a Line Seperator;
+
+The major difference between FileWriter and BufferedWriter:
+BufferedWriter has newLine() method to insert the new line operator.
+
+
+Example:
+
+public void main(){
+
+    FileWriter fw = new FileWriter("abc.txt",true);
+	BufferedWriter bw = new BufferedWriter(fw);
+	bw.write(100);
+	bw.newLine();
+	bw.write("iamleohan");
+	bw.newLine();
+	char[] array = {'a','b','c'};
+	bw.write(array);
+	bw.newLine();
+	bw.flush();
+	bw.close();
+}
+NOTE: Whenever we close the BufferedWriter , it will automatically close the underlying Writer, so you dont need to close the enclosed writer anymore.
+
+
+########## BufferedReader #
+
+we can use BufferedReader to read character data (text data) from the file
+The main advantage BufferedReader over FileReader is that BufferedReader can read data line by line in addition to character by character, which is more convinent to the programmer
+
+
+##Constructors
+1) BufferedReader br = new BufferedReader(Reader rd);
+2) BufferedReader br = new BufferedReader(Reader rd, int buffersize)
+
+Note: BufferedReader can not communicate with File directly, it always work with Reader interface, since it is the Decorator pattern
+
+##Methods
+1) int read();
+2) int read(char[] ch);
+3) void close();
+**4) Stirng readLine();
+//it try to read next line from the file. 
+// if the next line is available , it will return it 
+// if the next line is not available, it will return null
+
+
+BufferedReader we can read data line by line and character by character
+
+
+
+
+
+
+
+
+
+
+Example:
+
+public void main(){
+
+	FileReader fr = new FileReader("abc.txt");
+	BufferedReader br = new BufferedReader(fr);
+	
+	String line = br.readLine();
+	while(line!=null){
+	  System.out.println(line);
+	  line = br.readLine();
+	}
+	
+	br.close();
+
+}
+
+when we close the BufferedReader, it will automatically close all the enclosed reader.
+
+BufferedReader is the most enhanced Reader to read character from file.
+
+
+###### PrintWriter###
+
+It is the most enhanced Writer to write character data to file.
+The main advantage of PrintWriter is we can write any 
+primitive type data into file.
+
+
+##Constructors
+  1) PrintWriter pw = new PrintWriter(String filename);
+  2) PrintWriter pw = new PrintWriter(File file);
+  3) PrintWriter pw = new PrintWriter(Writer w);
+  
+Note: Print writer can communicate with both file and Writer
+
+###Methods
+
+#write methods
+
+1) write(int ch);
+2) write(char[] ch);
+3) write(String s);
+4) flush();
+5) close();
+
+#print methods
+
+1) print(char ch);
+2) print(int i);
+3) print(double d);
+4) print(boolean b);
+5) print(String s);
+
+#println methods
+
+1) println(char ch);
+2) println(int i);
+3) println(double d);
+4) println(boolean b);
+5) println(String s);
+
+
+Example:
+
+public void main(){
+
+	PrintWriter pw = new PrintWriter("abc.txt");
+	pw.write(100);
+	pw.println(100);
+	pw.println(true);
+	pw.println('c');
+	pw.println("leo");
+	pw.flush();
+	pw.close();
+
+}
+
+
+
+
+
+*******
+The most Enhanced Writer is PrintWriter
+The most Enhanced Reader is BufferedReader
+
+In general, we use writer and reader to handle character data 
+
+we use FileInputStream to read Binary data from file 
+we use FileOutputStream to write Binary data to file 
+
+
+
+
+
+
+
+
