@@ -1,0 +1,159 @@
+Java IO package
+
+File I/O concepts
+
+File
+FileWriter
+FileReader
+BufferedWritter
+BufferedReader
+PrintWriter
+
+####    1 File class   #######
+
+File class object can be used to create/access File and Directory
+
+
+File f = new File("abc.txt"); This line wont create any physical file, it represent a file.
+  1) first it will check if there are any physical file already exist with abc.txt
+  2) if it already exists, then f point to that physical file.
+  3) if it dont not exist, it wont create any physical file, and it just create the file object to represent the file named abc.txt
+
+example:
+
+File f = new File("abc.txt");
+
+System.out.println(f.exists()); // show if the file exists
+
+//if you want to create a file
+//if the physical not exist , then the physical file will be created
+//if the file exist already, it will not do anything
+f.createNewFile(); 
+
+System.out.println(f.exists()); // show if the file exists
+
+
+##create a directory
+
+File f = new File("directory");
+
+f.mkdir();
+
+
+##File class Constructors
+
+File class constructors:
+   //represent a file in the current directory
+  1) File f= new File(String name);
+  
+  //represent a file in the given directory
+  2) File f= new File(String subdir, String name)
+  
+  //represent a file in the given directory
+  3) File f = new File(File subdir, String name);
+  
+  example:  File f = new File("E:/xyz","han.txt");
+  
+  
+  
+#####Important methods of File class
+
+//return true if the specified physical file for directory exists in the system
+1) boolean exists();
+
+// 1.check if the physical file exist, 
+// 2. if exist return false without any operation 
+// 3. if not exist, create the new file and return true
+2) boolean createNewFile();
+3) boolean mkdir();
+
+//return true if this File object point to "physical file" 
+4) boolean isFile();
+
+//return true if the File object represent directory
+5) boolean isDirectory();
+
+// return the names of all files and directories in the specified directory
+6) String[] list();
+
+// return the number of characters of the file
+7) long length();
+
+//to delete specified file or directory
+8) boolean delete();
+
+
+example: 
+given a folder c:/leohan
+can you display the name of all the directories and files in the above folder
+
+
+public void display(){
+
+    File dir = new File("C:/leohan");
+    if(!dir.isDirectory())
+    return;
+    
+    String[] namelist = dir.list();
+    
+    for(String name: namelist){
+       File file = new File(dir, name);
+       if(file.isDirectory()){
+       System.out.println("Directory: "+name);
+       }else if( file.isFile() ){
+       System.out.println("File: "+name);
+       }
+    }
+}
+
+
+####### 2 FileWriter##############
+
+FileWriter is used to write character data (text data) into a file.
+
+
+##Constructors:
+   1) FileWriter fw = new FileWriter(string name);
+   2) FileWriter fw = new FileWriter(File f);
+   This two method, will overide the existing data in the file
+   
+   
+   1) FileWriter fw = new FileWriter(String name, boolean append);
+   2) FileWriter fw = new FileWriter(File f, boolean append);
+   
+   If the specified file is not exist, the above constructors will create that file
+   but it reqired the directory is present.
+
+
+##Methods of FileWriter class:
+
+   1) write(int ch): to write a single character to the file,unicode value
+   2) write(char[] ch): to write an array of characters to the file
+   3) write(String s): to write a String to the file
+   
+   //highly recommed to call this method at the end to make //sure all character data is write into file
+  *4) flush() : to give the guarantee the total data including last character written properly to the fiile
+   
+   //close the resource, need to close it otherwise affected //the performance
+   5) close();
+   
+   
+ Example:
+
+public void main(){
+
+	FileWriter fw = new FileWriter("abc.txt");
+	fw.write(100); // write a unicode character
+	fw.write("i am leo han"); //write a string
+	char[] ch1 = {'a','b','c'};
+	fw.write("\n");
+	fw.write(ch1); //write a char array
+	fw.flush(); //guarantee everything fw write to the file
+	fw.close(); //close the file writer
+} 
+
+problem with the FileWriter:
+ we need to manually insert the "\n"
+
+
+####### 3 FileReader ##############
