@@ -1,0 +1,178 @@
+Regular Expression
+
+1)Regular Expression
+2)Pattern
+3)Matcher
+4)Character classess
+5)Pre Defined Character classess
+6)Quantifiers
+7)Pattern class split()
+8)String Class split()
+9)StringTokenizer
+
+############ Regex Definition and Applications
+If we want to represent a group of string according to a particular pattern, then we should use Regex.
+
+eg1: we can write a Regex to represent all cell phone numbers
+eg2: we can write a Regex to represent all mail ids
+
+The main important application areas of Regex are 
+1) To develop validation frameworks
+2) to develop pattern matching applications (ctrl+f in windows | grep in Unix)
+3) to develop translators like compiler, interpretor (lexical analysis-scan/tokenization by using regex )
+4) to develop digital circuits like Melay Machines
+5) to develop communication protocols like TCP/IP, UDP
+
+
+
+Regex: it group a set of string objects according to a (pattern|format)
+
+
+############
+
+RegExDemo :
+
+Given a pattern is "ab"
+
+check the target "ababbaba"
+
+Pattern Matching to check:
+if the pattern is available?(if matching)
+where this pattern is available in the target?(index)
+how many time avaiulable?(count)
+
+
+//pattern matching application example
+public void main(String[] args){
+	int count=0;
+	//java pattern object, param is Regex
+	//we are searching for pattern "ab"
+	Pattern p = Pattern.compile("ab");
+	
+	//"ababbaba" is the target 
+	Matcher m = p.matcher("ababbaba");
+	
+	//if match avaliable m.find() return true
+	while(m.find){
+			count++;
+			System.out.println(m.start()+"..."+m.end()+"..."+m.group());
+	}
+	
+	System.out.println("Total occurances: "+count);
+
+
+}
+
+Pattern Matcing application by using Pattern and Matcher class
+
+Pattern matching is to find matched portion in the target string by using the given pattern
+
+##Pattern:
+
+Pattern object represent compiled version of RegEx.
+We can create Pattern object by using compile() method
+Java object version of RegEx
+
+Pattern p = Pattern.compile(RegEx);
+
+##Matcher:
+
+we can use Matcher object to match the given pattern in the target string 
+we can create the Matcher object by using matcher() of the pattern class
+
+public Matcher matcher(String target);
+
+Matcher m = p.matcher(target);
+
+##methods of Matcher class
+
+1) public boolean find()
+it try to find next match and return true if exist. otherwise return false
+2) public int start()
+return start index of the match
+3) public int end()
+return end+1 index of the match
+4) public String group()
+return the pattern 
+
+
+
+character class
+
+
+[abc]  a or b or c
+[^abc] expect a , b and c 
+[a-z] any lowercase character from a to z
+[A-Z] any uppercase character from A to Z
+[a-zA-Z]  any alphabet character
+[0-9] any digit
+[a-zA-Z0-9]  any alphanumeric character
+[^a-zA-Z0-9] any special character
+
+
+predefine character class
+
+\\s  space
+\\S  everything except space
+\\d  digit [0-9]
+\\D  everything except digit
+\\w  alphanumeric  [0-9a-zA-Z]
+\\W  special character
+.  everything 
+
+
+Quantifiers
+
+a  only one a 
+a+ at least one a 
+a* zero a or more a 
+a? zero or one a 
+
+
+
+
+Pattern class split()
+
+we can use Pattern class split() method to split the given target string according to the given pattern 
+
+Pattern p = Pattern.complile(regex);
+String[] s = p.split(target);
+
+regex is in the target, we return the list of result which take out the regex part. exclude the regex
+
+***regex will be exclude in the result,  the result list should not contain anything about the regex 
+
+
+
+String class split()
+
+String class also has split() to split given target string 
+
+String s ="i am leo han";
+String[] result = s.split(regex);
+
+
+StringTokenizer
+It is the special design class for Tokenizaton activites
+
+//the default regex for StringTokenizer is space 
+StringTokenizer st = new StringTokenizer("I AM LEO HAN");
+while(st.hasMoreTokens()){
+System.out.println(st.nextToken());
+}
+
+for example:
+
+StringTokenizer st = new StringTokenizer("416-833-1388","-");
+while(st.hasMoreTokens()){
+System.out.println(st.nextToken());
+}
+
+write a regex to represent all 10-digit phonenumber
+Rule£º every number should contain 10 digit
+the 1st didg should be 7 or 8 or 9
+
+[789]\\d{9}
+
+
+
